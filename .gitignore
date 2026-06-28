@@ -19,5 +19,8 @@ buildNumber.properties
 .env.local
 
 # Agent AI
-.agent/*
-skills/*
+.agent/
+skills/
+
+# Documentation
+Documentacion/

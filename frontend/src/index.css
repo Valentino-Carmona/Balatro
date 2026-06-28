@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Rye&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper text-ink overflow-x-hidden;
+    font-family: 'Rye', cursive;
+    background-image: radial-gradient(#d3c5b3 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+
+@layer components {
+  .rubber-card {
+    @apply bg-white border-4 border-ink rounded-xl shadow-vintage transition-transform duration-200 ease-in-out hover:-translate-y-2 hover:shadow-none flex flex-col items-center justify-center relative;
+  }
+
+  .rubber-btn {
+    @apply bg-vintageRed text-white border-4 border-ink px-6 py-3 font-bold text-xl uppercase tracking-widest rounded-full shadow-vintage transition-all active:translate-y-1 active:shadow-none;
+  }
+}
+
+/* Custom premium animations matching the Rubber Hose & vintage aesthetic */
+
+@keyframes drift {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(15px, -15px) rotate(8deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50%       { transform: scale(1.03) translateY(-2px); filter: brightness(1.08); }
+}
+
+@keyframes text-glow-amber {
+  0%, 100% { text-shadow: 0 0 15px rgba(251, 191, 36, 0.2), 4px 4px 0 #0d1520; }
+  50%       { text-shadow: 0 0 35px rgba(251, 191, 36, 0.7), 4px 4px 0 #0d1520; }
+}
+
+@keyframes text-glow-red {
+  0%, 100% { text-shadow: 0 0 15px rgba(239, 68, 68, 0.2), 4px 4px 0 #0d1f0d; }
+  50%       { text-shadow: 0 0 35px rgba(239, 68, 68, 0.7), 4px 4px 0 #0d1f0d; }
+}
+
+@keyframes vibe {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20%       { transform: translate(-1.5px, 1px) rotate(-0.6deg); }
+  40%       { transform: translate(2px, -1.5px) rotate(0.6deg); }
+  60%       { transform: translate(-2px, -1px) rotate(-0.6deg); }
+  80%       { transform: translate(1.5px, 2px) rotate(0.6deg); }
+}
+
+@keyframes bg-pan {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Drift decoration ──────────────────────────────────────────────────────── */
+.animate-drift-slow   { animation: drift 12s ease-in-out infinite; }
+.animate-drift-slower { animation: drift 18s ease-in-out infinite; }
+
+/* ── Score animations ──────────────────────────────────────────────────────── */
+.animate-pulse-subtle    { animation: pulse-subtle 2s ease-in-out infinite; }
+.animate-text-glow-amber { animation: text-glow-amber 3s ease-in-out infinite; }
+.animate-text-glow-red   { animation: text-glow-red   3s ease-in-out infinite; }
+
+/* ── Card deal pop-in ──────────────────────────────────────────────────────── */
+.card-deal { animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ── Universal button: color shift on hover + sink on click ────────────────── */
+/*    Apply this to every <button>. Works with any background color because     */
+/*    it only uses filter (brightness/saturate) rather than replacing the color. */
+.btn-interactive {
+  transition: filter 0.12s ease-out, transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  cursor: pointer;
+}
+.btn-interactive:hover:not(:disabled) {
+  filter: brightness(1.22) saturate(1.12);
+  transform: translateY(-1px);
+}
+.btn-interactive:active:not(:disabled) {
+  filter: brightness(0.88);
+  transform: translateY(2px);
+  box-shadow: none !important;
+}
+.btn-interactive:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* ── Card in hand: single subtle shake on hover (no color change) ──────────── */
+.card-hover-vibe {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.card-hover-vibe:hover:not(:disabled) {
+  animation: vibe 0.22s ease-out 1;
+}
+
+/* ── Animated table felt gradient ─────────────────────────────────────────── */
+.table-bg-animated {
+  background: linear-gradient(-45deg, #0a170a, #112811, #1a3c1a, #081208) !important;
+  background-size: 400% 400% !important;
+  animation: bg-pan 20s ease infinite !important;
+}
+
+.shop-bg-animated {
+  background: linear-gradient(-45deg, #091520, #132435, #1a2d40, #060e18) !important;
+  background-size: 400% 400% !important;
+  animation: bg-pan 20s ease infinite !important;
+}
+
+
+
+

@@ -1,7 +1,7 @@
 # Balatro Web MVP (Motor Autoritativo Stateless)
 
-[![CI/CD Pipeline](https://github.com/TU_USUARIO/TU_REPOSITORIO/actions/workflows/ci.yml/badge.svg)](https://github.com/TU_USUARIO/TU_REPOSITORIO/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/TU_USUARIO/TU_REPOSITORIO/graph/badge.svg?token=38924f00-7fcf-424a-9ace-1340d6d9955b)](https://codecov.io/gh/TU_USUARIO/TU_REPOSITORIO)
+[![CI/CD Pipeline](https://github.com/Valentino-Carmona/Balatro/actions/workflows/ci.yml/badge.svg)](https://github.com/Valentino-Carmona/Balatro/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Valentino-Carmona/Balatro/graph/badge.svg)](https://codecov.io/gh/Valentino-Carmona/Balatro)
 
 Este proyecto es la implementación web (MVP) del clásico juego de cartas, dividido arquitectónicamente en un backend robusto de Spring Boot que expone APIs REST y un frontend independiente con estética "Rubber Hose".
 

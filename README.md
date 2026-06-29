@@ -8,6 +8,15 @@
 
 ¡Bienvenido a **Balatro Web MVP 2**! Este proyecto es una implementación moderna y altamente interactiva del exitoso roguelike de póker, diseñado con una arquitectura robusta orientada a servicios (Backend en Spring Boot) y una estética "Rubber Hose" sumamente pulida para ofrecer una experiencia inmersiva.
 
+🚀 **¡Juega la versión web en vivo aquí!** 👉 [balatro-frontend.onrender.com](https://balatro-frontend.onrender.com)
+
+> [!IMPORTANT]
+> **Nota sobre el primer inicio (Servidores en Reposo):**
+> Dado que el proyecto está desplegado en la versión gratuita de Render, los servidores entran en "modo reposo" tras periodos de inactividad. 
+> * Al hacer clic en el enlace, el **Frontend** tardará unos 30-50 segundos en "despertar" y renderizarse en tu navegador.
+> * Una vez dentro, al hacer clic en **"Nueva Partida"**, se enviará la primera petición al **Backend**, lo que iniciará su proceso de reactivación (puede tardar otros 50 segundos en responder por primera vez).
+> * A partir de ese primer contacto, el juego fluirá de forma inmediata e instantánea. ¡Agradecemos tu paciencia al ingresar por primera vez!
+
 ## 🎮 ¿De qué se trata el juego?
 
 **Balatro** es un roguelike de construcción de mazos inspirado en el póker. 

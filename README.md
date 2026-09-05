@@ -1,12 +1,12 @@
-# Balatro Web MVP (Motor Autoritativo Stateless)
+# Balatro Web
 
 [![CI/CD Pipeline](https://github.com/Valentino-Carmona/Balatro/actions/workflows/ci.yml/badge.svg)](https://github.com/Valentino-Carmona/Balatro/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Valentino-Carmona/Balatro/graph/badge.svg)](https://codecov.io/gh/Valentino-Carmona/Balatro)
 
 > [!NOTE]
-> **Estado del Proyecto:** Esta versión en Java constituye un **MVP (Producto Mínimo Viable)** presentado al cliente para validar la experiencia del clásico juego de cartas Balatro. Representa el juego prácticamente terminado en cuanto a su lógica y mecánicas principales, desarrollo que sirvió como base para ser portado posteriormente y funcionar en la página web del cliente.
+> **Estado del Proyecto:** Esta versión en Java constituye una adaptación del proyecto Balatro hecho en la materia Algoritmos y Programación III (También la materia se puede encontrar como Paradigmas de Programación) y fue adaptaddo para validar la experiencia del juego en su versión web. Representa el juego prácticamente terminado en cuanto a su lógica y mecánicas principales originales.
 
-¡Bienvenido a **Balatro Web MVP 2**! Este proyecto es una implementación moderna y altamente interactiva del exitoso roguelike de póker, diseñado con una arquitectura robusta orientada a servicios (Backend en Spring Boot) y una estética "Rubber Hose" sumamente pulida para ofrecer una experiencia inmersiva.
+¡Bienvenido a **Balatro Web**! Este proyecto es una implementación moderna y altamente interactiva del proyecto original de la materia (El juego es el exitoso roguelike de póker), diseñado con una arquitectura robusta orientada a servicios (Backend en Spring Boot) y una estética "Rubber Hose" sumamente pulida para ofrecer una experiencia inmersiva.
 
 🚀 **¡Juega la versión web en vivo aquí!** 👉 [balatro-frontend.onrender.com](https://balatro-frontend.onrender.com)
 
@@ -32,13 +32,13 @@ El jugador debe superar rondas (ciegas y antes) logrando un puntaje objetivo (`t
 
 ## ✨ Características Especiales y Jugabilidad
 
-Este motor de Balatro ha sido desarrollado para brindar una experiencia web competitiva, segura y muy disfrutable:
+Este motor de Balatro ha sido desarrollado para brindar una experiencia web intuitiva, segura y muy disfrutable:
 
 ### 🧠 Motor Autoritativo Stateless
 A diferencia de juegos puramente del lado del cliente, aquí el frontend es una "marioneta visual". Toda la lógica de cálculo de puntajes, resolución de manos válidas, aplicación de estrategias de jokers y estados del jugador reside y se valida exclusivamente en el servidor Backend. 
 
 ### 🛡️ Auditoría y Seguridad
-El motor fue fortificado con prácticas de seguridad de estándar industrial, incluyendo mitigaciones contra vulnerabilidades comunes. Implementa cabeceras HTTP defensivas (contra Clickjacking, XSS), un sistema robusto de control de dependencias mediante SCA y manejo seguro de sesiones en memoria sin exposición a vectores de ataque de Path Traversal.
+El motor fue creado con prácticas de seguridad estándar en la industria, incluyendo mitigaciones contra vulnerabilidades comunes. Implementa cabeceras HTTP defensivas (contra Clickjacking, XSS), un sistema robusto de control de dependencias mediante SCA y manejo seguro de sesiones en memoria sin exposición a vectores de ataque de Path Traversal. (Todo totalmente innecesario para este juego JAJAJA)
 
 ### 📐 API REST Robusta y Resiliente
 Comunicación fluida mediante endpoints JSON validados estrictamente. Se incorporaron tests de contratos, filtros CORS configurados minuciosamente y tolerancia a fallos ante cuerpos de petición malformados, retornando respuestas HTTP limpias y coherentes.
@@ -60,7 +60,7 @@ La experiencia se juega íntegramente a través de la interfaz visual web, de fo
 
 ## 🎨 Aspecto Visual
 
-El proyecto destaca por una profunda inmersión estética inspirada en el estilo retro **"Rubber Hose"**, cuidando hasta el mínimo detalle de la experiencia de usuario:
+El proyecto destaca por una profunda inmersión estética inspirada en el estilo retro **"Rubber Hose"**, cuidando  la experiencia de usuario:
 
 * 🎲 **Fondo de Fieltro Animado**: La mesa y los menús lucen un gradiente dinámico (`.table-bg-animated`) que simula la iluminación cambiante sobre un tapete real de casino, de forma sutil y relajante.
 * 🪙 **Fichas Flotantes Interactivas**: Elementos vectoriales retro orbitan de manera asíncrona en los márgenes de la pantalla, aportando vida y movimiento al menú.
@@ -71,7 +71,7 @@ El proyecto destaca por una profunda inmersión estética inspirada en el estilo
 
 ## 🏗️ Arquitectura y Estructura del Proyecto
 
-El proyecto está diseñado bajo un modelo de arquitectura **Cliente-Servidor** siguiendo rígidamente el principio de separación de responsabilidades (*Separation of Concerns*). 
+El proyecto está diseñado bajo un modelo de arquitectura **Cliente-Servidor** siguiendo el principio de separación de responsabilidades (*Separation of Concerns*). 
 
 ### 1. Backend (Java 11 / Spring Boot)
 Toda la lógica pura de negocio y dominio reside en el directorio `/backend`.
@@ -87,7 +87,7 @@ La capa de presentación ha sido aislada en `/frontend`.
 
 ### 🛡️ Buenas Prácticas de Ingeniería Implementadas
 * **Alta Fiabilidad vía Testing**: El backend supera un 80% de cobertura de código validado con `JaCoCo`. Cuenta con Unit Tests aislados (Mockito), Integration Tests completos (end-to-end) y Contract Tests para verificar robustez de la API.
-* **Desacoplamiento Extremo**: La independencia del Frontend/Backend fomenta mantenibilidad.
+* **Desacoplamiento**: La independencia del Frontend/Backend fomenta mantenibilidad.
 * **Dockerización Fullstack**: Todo el ecosistema (cliente y API) se levanta usando contenedores de Docker, asegurando paridad entre ambientes y evitando el problema "en mi máquina funciona".
 
 ---
@@ -214,9 +214,9 @@ El proyecto cuenta con un conjunto robusto de pruebas automatizadas y chequeo de
   ```
 
 * **Para ver el reporte de cobertura generado**:
-  Abre el siguiente archivo en tu navegador web:
+  Abre el siguiente archivo:
   `backend/target/site/jacoco/index.html`
 
 * **Para ver el reporte de seguridad generado**:
-  Abre el siguiente archivo en tu navegador web:
+  Abre el siguiente archivo:
 `backend/target/dependency-check-report.html`

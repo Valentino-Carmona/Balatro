@@ -25,7 +25,7 @@ As part of the original team, my specific individual contributions included:
 
 The project is designed under a **Client-Server** architecture model. My main technical focus in this adaptation resides in the Backend.
 
-### 3.1. Backend (Java 11 / Spring Boot)
+### 3.1. Backend (Java 25 / Spring Boot)
 The migrated game domain resides in `/backend`, where the original business logic was adapted to Spring Boot and exposed through REST services. During the migration, the original domain was isolated (completely discarding the JavaFX visual layer), maintaining its core components (such as the JSON `Parser` used as data seed) and orchestrating them through HTTP endpoints.
 * **Model and Services**: Decoupled structures and match flow orchestration.
 * **Controllers**: REST API and request validation (e.g., `/api/v1/game/play`).

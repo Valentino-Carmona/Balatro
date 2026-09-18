@@ -1,178 +1,113 @@
-# Setup, Execution, and Testing Guide
+# Setup and Testing Guide
 
-This guide provides detailed, step-by-step instructions for building, running, and testing the Balatro Web application, both using containerized environments (Docker) and local development setups.
-
----
-
-## 1. Prerequisites
-
-You can run and test this project through two different workflows:
-
-### Option A: Containerized with Docker (Recommended)
-* **Docker Desktop** installed and running (Windows / macOS / Linux).
-* No local installation of Java, Maven, or Node.js is required.
-
-### Option B: Native Local Development
-* **JDK 11** (e.g., Eclipse Temurin 11).
-* **Apache Maven 3.8+** (must be configured in your system `PATH`).
-* **Node.js 20+** and **npm**.
+This guide provides step-by-step instructions for building, running, and testing the project (Backend and Frontend).
 
 ---
 
-## 2. Running the Application
+## 1. Primary Method: Using Docker (Recommended)
 
-> [!IMPORTANT]
-> Always execute Docker commands from the **root directory** of the repository (`Balatro/`), where `docker-compose.yml` is located.
+If Docker Desktop is installed and running, local installations of Java, Maven, or Node.js are not required. Docker will automatically isolate and prepare the environment.
 
-### 2.1. Using Docker Compose (Full Stack)
+### Running the Application
 
-To build and start both the backend API and frontend client in isolated containers:
+Open a terminal in the project root directory (where the `docker-compose.yml` file is located) and execute:
 
-```bash
-# From the repository root:
-docker compose up --build
-```
-
-To run in detached mode (background):
 ```bash
 docker compose up --build -d
 ```
+*(The `-d` flag runs the containers in detached mode, running them in the background).*
 
-To stop all running services:
+Once the build process completes:
+* **Frontend Application**: Accessible at [http://localhost:5173](http://localhost:5173)
+* **Backend API**: Running implicitly at `http://localhost:8080`
+
+To stop the services, execute:
 ```bash
 docker compose down
 ```
 
-Once started:
-* **Frontend Web UI**: [http://localhost:5173](http://localhost:5173)
-* **Backend REST API**: [http://localhost:8080](http://localhost:8080) (Health / endpoints under `/api/v1/game/*`)
+### Running Tests and Viewing Coverage Reports
 
----
+The project includes an automated testing suite and security checks. These can be executed entirely through Docker.
 
-### 2.2. Running Manually in Local Environments
-
-If you prefer to run services natively without Docker:
-
-#### Step 1: Start the Backend (Spring Boot)
-Open a terminal:
+**A) Fast Test Execution (Without visual reports):**
+Ideal for quickly verifying that the code is passing all tests.
 ```bash
-cd backend
-mvn spring-boot:run
+docker build --target test ./backend
 ```
-The API will start listening on port `8080`.
 
-#### Step 2: Start the Frontend (Vite / React)
-Open a second terminal:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-The client will start and provide a local URL (typically `http://localhost:5173`).
+**B) Full Test Execution with HTML Reports (Coverage and Security):**
+Execute the following command. This will download a Maven image, mount the source code, run the tests, and save the resulting `.html` files directly to the local `backend/target/` directory.
 
----
-
-## 3. Running Tests and Quality Checks
-
-### 3.1. Running Tests via Docker (No Local Maven Required)
-
-If your local environment does not have Maven installed in `PATH` (`mvn: command not found`), you can run all automated tests and quality tools inside an official Maven container:
-
-#### Run All Tests and Generate JaCoCo Coverage Report
-* **PowerShell (Windows)**:
+* **PowerShell (Windows):**
   ```powershell
-  docker run --rm -v "${PWD}/backend:/app" -w /app maven:3.8-eclipse-temurin-11-alpine mvn clean test jacoco:report
+  docker run --rm -v "${PWD}/backend:/app" -w /app maven:3.9-eclipse-temurin-25-alpine mvn clean test jacoco:report dependency-check:check
   ```
-* **Bash (Linux / macOS)**:
+* **Bash (Linux/macOS):**
   ```bash
-  docker run --rm -v "$(pwd)/backend:/app" -w /app maven:3.8-eclipse-temurin-11-alpine mvn clean test jacoco:report
+  docker run --rm -v "$(pwd)/backend:/app" -w /app maven:3.9-eclipse-temurin-25-alpine mvn clean test jacoco:report dependency-check:check
   ```
 
-#### Run Only Integration Tests
-* **PowerShell**:
-  ```powershell
-  docker run --rm -v "${PWD}/backend:/app" -w /app maven:3.8-eclipse-temurin-11-alpine mvn test "-Dtest=GameFlowIntegrationTest" jacoco:report
-  ```
-
-#### Run Only API Contract Tests
-* **PowerShell**:
-  ```powershell
-  docker run --rm -v "${PWD}/backend:/app" -w /app maven:3.8-eclipse-temurin-11-alpine mvn test "-Dtest=ApiContractTest" jacoco:report
-  ```
-
-#### Run Security Vulnerability Audit (OWASP Dependency-Check)
-* **PowerShell**:
-  ```powershell
-  docker run --rm -v "${PWD}/backend:/app" -w /app maven:3.8-eclipse-temurin-11-alpine mvn dependency-check:check
-  ```
+Once the process finishes, open these files in a web browser to view the graphical results:
+* **Code Coverage Report (JaCoCo):** Open `backend/target/site/jacoco/index.html`
+* **Vulnerability Audit (OWASP):** Open `backend/target/dependency-check-report.html`
 
 ---
 
-### 3.2. Running Tests with Local Maven
+## 2. Manual Method: Local Development Environments
 
-If you have Maven installed locally:
+For development purposes where Docker is not preferred, the following dependencies must be installed locally:
+- **Java 25** (e.g., Eclipse Temurin 25)
+- **Apache Maven 3.9+** (Added to the system PATH)
+- **Node.js 20+** and **npm**
 
-#### Run All Unit and Integration Tests with JaCoCo:
-```bash
-cd backend
-mvn clean test jacoco:report
-```
+### Running the Application Locally
 
-#### Run API Contract Tests:
-```bash
-cd backend
-mvn test -Dtest=ApiContractTest
-```
+1. **Backend (Spring Boot):**
+   Open a terminal, navigate to the backend directory, and start the service:
+   ```bash
+   cd backend
+   mvn spring-boot:run
+   ```
+   *(The backend process will block the terminal).*
 
-#### Run OWASP Dependency-Check:
-```bash
-cd backend
-mvn dependency-check:check
-```
+2. **Frontend (Vite / React):**
+   Open a **new** terminal (to avoid interrupting the backend), navigate to the frontend directory, install dependencies, and start the development server:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   *(The application will be available at `http://localhost:5173`, and any source code changes will reflect instantly).*
+
+### Executing Tests Locally (With Maven)
+
+From a terminal located in the `backend/` directory:
+
+* **Run all tests and generate the JaCoCo coverage report:**
+  ```bash
+  mvn clean test jacoco:report
+  ```
+* **Run API contract tests only:**
+  ```bash
+  mvn test -Dtest=ApiContractTest
+  ```
+* **Run vulnerability audit (OWASP Dependency-Check):**
+  ```bash
+  mvn dependency-check:check
+  ```
+*(Similarly to the Docker approach, the `.html` reports will be generated in the `backend/target/` directory).*
 
 ---
 
-## 4. Inspecting Reports
+## 3. Environment Variables
 
-After executing the test and audit commands, reports are generated in the `backend/target/` directory:
+If connection configurations need to be modified (e.g., for cloud deployment), the following variables are available:
 
-* **JaCoCo Coverage Report**:
-  Open in your web browser:
-  `backend/target/site/jacoco/index.html`
-* **OWASP Vulnerability Report**:
-  Open in your web browser:
-  `backend/target/dependency-check-report/dependency-check-report.html`
-
----
-
-## 5. Environment Variables
-
-| Variable | Target | Default Value | Description |
+| Variable | Target | Local Default Value | Description |
 | :--- | :--- | :--- | :--- |
-| `VITE_API_URL` | Frontend | `http://localhost:8080/api/v1/game` | Target API base URL consumed by the client. |
-| `CORS_ALLOWED_ORIGINS` | Backend | `http://localhost:5173` | Comma-separated allowed origins for CORS headers. |
+| `VITE_API_URL` | Frontend | `http://localhost:8080/api/v1/game` | The full URL where the frontend sends REST requests. |
+| `CORS_ALLOWED_ORIGINS` | Backend | `*` or `http://localhost:5173` | Allowed web origins to prevent browser CORS blocks. |
+| `PORT` | Backend | `8080` | The port where the Spring Boot server listens. |
 
-* A sample file is available at `backend/.env.example`.
-* Docker Compose automatically supplies functional defaults if no `.env` file is present.
-
----
-
-## 6. Troubleshooting
-
-### 1. `mvn: The term 'mvn' is not recognized`
-* **Cause**: Apache Maven is not installed locally or its `bin` directory is not registered in your operating system's `PATH` environment variable.
-* **Resolution**:
-  * Either execute test commands using the **Docker containerized commands** provided in [Section 3.1](#31-running-tests-via-docker-no-local-maven-required).
-  * Or install Apache Maven 3.8+ and add it to your system PATH, or run the project through an IDE (such as IntelliJ IDEA or VS Code with Extension Pack for Java).
-
-### 2. `env file ... not found` when running Docker Compose
-* **Cause**: Running `docker compose` from inside the `backend/` directory instead of the project root.
-* **Resolution**: Navigate back to the repository root directory before running Compose:
-  ```bash
-  cd f:\ALL\PROGRAMACION\Proyectos\Balatro\Balatro\Balatro
-  docker compose up --build
-  ```
-
-### 3. Docker connection error / daemon not running
-* **Cause**: Docker Desktop is not running or has not finished initializing.
-* **Resolution**: Start Docker Desktop and wait until the whale icon indicates "Engine running" before executing docker commands.
+*(Note: When running locally with `docker-compose.yml`, the default values are automatically injected and require no additional configuration).*

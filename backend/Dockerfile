@@ -1,5 +1,5 @@
 # Etapa 1: Compilación (Build)
-FROM maven:3.8-eclipse-temurin-11-alpine AS build
+FROM maven:3.9-eclipse-temurin-17-alpine AS build
 WORKDIR /app
 
 # Copiamos el pom y descargamos dependencias offline para cachear capas
@@ -12,7 +12,7 @@ COPY data ./data
 RUN mvn clean package -DskipTests
 
 # Etapa 2: Entorno de ejecución (Runtime)
-FROM eclipse-temurin:11-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 # Por seguridad, creamos un usuario no root
 RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001 -G appgroup

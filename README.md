@@ -51,12 +51,16 @@ For the implementation of the jokers' passive mechanics, I used the **Strategy P
 <br>
 ![Sequence Diagram - Joker Application](docs/diagrams/readme_showcase/JokerApplyUMLSecuencia.png)
 
-## 05. Testing & Quality
+## 05 Testing & Quality
 
-* **The backend achieves 89% coverage (Line Coverage) with JaCoCo.**
-* Unit tests with Mockito, integration tests for game flows, and API contract tests.
-* CI Pipeline via GitHub Actions.
-* OWASP Dependency-Check implemented via Maven for vulnerability auditing.
+The backend achieves **94% line coverage** and **82% branch coverage** with JaCoCo.
+
+* **Unit Tests:** isolated testing of domain logic and services using Mockito.
+* **Integration Tests:** validation of complete game flows across multiple components.
+* **API Contract Tests:** verification of HTTP responses and security-related API behavior.
+* **Architecture Tests:** validation of architectural constraints using ArchUnit.
+* **Continuous Integration:** GitHub Actions automatically runs the Maven test and verification pipeline.
+* **Security Analysis:** OWASP Dependency-Check is configured through Maven to audit project dependencies for known vulnerabilities.
 
 ## 06. Live Demo
 

@@ -8,20 +8,34 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.16</version>
+    <version>4.1.1</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <junit.jupiter.version>5.4.0</junit.jupiter.version>
-    <mockito-mockito-core-version>3.3.0</mockito-mockito-core-version>
-    <maven-surefire-version>3.0.0-M3</maven-surefire-version>
-    <archunit-version>0.21.0</archunit-version>
+    <mockito-mockito-core-version>5.23.0</mockito-mockito-core-version>
+    <maven-surefire-version>3.5.2</maven-surefire-version>
+    <archunit-version>1.5.0</archunit-version>
 
     <main-class>com.balatro.Main</main-class>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- spring-dotenv BOM: modulo compatible con Spring Boot 4 -->
+      <dependency>
+        <groupId>me.paulschwarz</groupId>
+        <artifactId>spring-dotenv-bom</artifactId>
+        <version>5.1.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -40,11 +54,16 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
+    <!-- spring-dotenv: modulo compatible con Spring Boot 4 (version gestionada por BOM) -->
     <dependency>
       <groupId>me.paulschwarz</groupId>
-      <artifactId>spring-dotenv</artifactId>
-      <version>4.0.0</version>
+      <artifactId>springboot4-dotenv</artifactId>
     </dependency>
 
     <dependency>
@@ -53,50 +72,26 @@
       <version>1.1.1</version>
     </dependency>
 
+    <!-- JUnit Jupiter: version gestionada por Spring Boot BOM -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Mockito 5.x: compatible con Java 25 -->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>${mockito-mockito-core-version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- ArchUnit 1.x: compatible con Java 25 -->
     <dependency>
       <groupId>com.tngtech.archunit</groupId>
       <artifactId>archunit</artifactId>
       <version>${archunit-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.30</version>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>RELEASE</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <scope>test</scope>
-      <exclusions>
-          <exclusion>
-              <groupId>org.hamcrest</groupId>
-              <artifactId>hamcrest-core</artifactId>
-          </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -116,16 +111,19 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.14.1</version>
         <configuration>
           <release>17</release>
+          <compilerArgs>
+            <!-- Workaround: javac 25 NPE en inner classes con classpath de bytecode antiguo -->
+            <arg>-XDnullCheckOuterThis=false</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
-
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -135,10 +133,11 @@
           <argLine>${argLine}</argLine>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.2</version>
+        <version>0.8.12</version>
         <executions>
           <execution>
             <goals>
@@ -154,6 +153,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-maven</artifactId>

@@ -4,7 +4,7 @@ import com.balatro.modelo.Card;
 import com.balatro.modelo.Rank;
 import com.balatro.modelo.Score;
 import com.balatro.modelo.Suit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

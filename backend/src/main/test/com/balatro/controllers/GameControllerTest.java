@@ -3,13 +3,13 @@ package com.balatro.controllers;
 import com.balatro.dto.*;
 import com.balatro.modelo.*;
 import com.balatro.services.GameManager;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,13 +21,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = GameController.class, excludeAutoConfiguration = {org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class})
+@WebMvcTest(controllers = GameController.class, properties = {"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration,org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration"})
 public class GameControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private GameManager gameManager;
 
     @Autowired
@@ -112,7 +112,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/discard")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
@@ -127,7 +127,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/buy")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
@@ -144,7 +144,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/play")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
@@ -161,7 +161,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/evaluate-hand")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
@@ -182,7 +182,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/play")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.gameState.gameOver").value(true));
@@ -193,7 +193,7 @@ public class GameControllerTest {
         Mockito.when(gameManager.getSession("invalid")).thenReturn(null);
         mockMvc.perform(post("/api/v1/game/play")
                 .header("X-Session-ID", "invalid")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(new PlayHandRequestDTO())))
                 .andExpect(status().isNotFound());
     }
@@ -203,7 +203,7 @@ public class GameControllerTest {
         Mockito.when(gameManager.getSession("invalid")).thenReturn(null);
         mockMvc.perform(post("/api/v1/game/discard")
                 .header("X-Session-ID", "invalid")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(new PlayHandRequestDTO())))
                 .andExpect(status().isNotFound());
     }
@@ -240,7 +240,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/buy")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest());
     }
@@ -257,7 +257,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/buy")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
@@ -274,7 +274,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/buy")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
@@ -289,7 +289,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/reorder-jokers")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }
@@ -302,7 +302,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/remove-joker")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Astuto\"}"))
                 .andExpect(status().isOk());
     }
@@ -315,7 +315,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/remove-tarot")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"El Loco\"}"))
                 .andExpect(status().isOk());
     }
@@ -332,7 +332,7 @@ public class GameControllerTest {
         
         mockMvc.perform(post("/api/v1/game/use-tarot")
                 .header("X-Session-ID", "session-123")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
     }

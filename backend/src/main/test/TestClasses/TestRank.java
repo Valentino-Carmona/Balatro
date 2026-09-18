@@ -1,7 +1,7 @@
 package TestClasses;
 
 import com.balatro.modelo.Rank;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

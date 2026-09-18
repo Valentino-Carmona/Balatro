@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Arrays;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,16 +25,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors().configurationSource(corsConfigurationSource()).and()
-            .csrf().disable()
-            .authorizeRequests()
-                .anyRequest().permitAll()
-            .and()
-            .headers()
-                .frameOptions().deny()
-                .contentSecurityPolicy("default-src 'self'").and()
-                .contentTypeOptions().and()
-                .cacheControl();
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.deny())
+                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
+                .contentTypeOptions(withDefaults())
+                .cacheControl(withDefaults())
+            );
         return http.build();
     }
 

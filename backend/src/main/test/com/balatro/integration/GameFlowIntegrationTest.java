@@ -5,9 +5,11 @@ import com.balatro.dto.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -28,8 +30,15 @@ public class GameFlowIntegrationTest {
     @LocalServerPort
     private int port;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate();
+    {
+        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
+            @Override
+            public boolean hasError(ClientHttpResponse response) {
+                return false;
+            }
+        });
+    }
 
     private static String sessionId;
     private static List<CardDTO> handCards;
@@ -102,7 +111,7 @@ public class GameFlowIntegrationTest {
 
         HttpHeaders postH = new HttpHeaders();
         postH.set("X-Session-ID", sessionId);
-        postH.setContentType(MediaType.APPLICATION_JSON);
+        postH.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<GameSessionDTO> r = restTemplate.exchange(
             base() + "/discard", HttpMethod.POST, new HttpEntity<>(req, postH), GameSessionDTO.class);
 
@@ -127,7 +136,7 @@ public class GameFlowIntegrationTest {
 
         HttpHeaders postH = new HttpHeaders();
         postH.set("X-Session-ID", sessionId);
-        postH.setContentType(MediaType.APPLICATION_JSON);
+        postH.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<PlayResponseDTO> r = restTemplate.exchange(
             base() + "/play", HttpMethod.POST, new HttpEntity<>(req, postH), PlayResponseDTO.class);
 
@@ -155,7 +164,7 @@ public class GameFlowIntegrationTest {
 
         HttpHeaders postH = new HttpHeaders();
         postH.set("X-Session-ID", sessionId);
-        postH.setContentType(MediaType.APPLICATION_JSON);
+        postH.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<ScoreResponseDTO> r = restTemplate.exchange(
             base() + "/evaluate-hand", HttpMethod.POST, new HttpEntity<>(req, postH), ScoreResponseDTO.class);
 
@@ -174,7 +183,7 @@ public class GameFlowIntegrationTest {
     void testBuyItem_InvalidSession_Returns404() {
         BuyRequestDTO req = new BuyRequestDTO(); req.setType("joker"); req.setName("Cualquier Joker");
         HttpHeaders h = new HttpHeaders();
-        h.set("X-Session-ID", "sesion-invalida-xyz"); h.setContentType(MediaType.APPLICATION_JSON);
+        h.set("X-Session-ID", "sesion-invalida-xyz"); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<String> r = restTemplate.exchange(
             base() + "/buy", HttpMethod.POST, new HttpEntity<>(req, h), String.class);
 
@@ -202,7 +211,7 @@ public class GameFlowIntegrationTest {
 
         BuyRequestDTO req = new BuyRequestDTO(); req.setType("joker"); req.setName(jokerName);
         HttpHeaders postH = new HttpHeaders();
-        postH.set("X-Session-ID", sessionId); postH.setContentType(MediaType.APPLICATION_JSON);
+        postH.set("X-Session-ID", sessionId); postH.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<GameSessionDTO> r = restTemplate.exchange(
             base() + "/buy", HttpMethod.POST, new HttpEntity<>(req, postH), GameSessionDTO.class);
 
@@ -223,7 +232,7 @@ public class GameFlowIntegrationTest {
         int blindBefore = startResp.getBody().getCurrentBlind();
 
         HttpHeaders h = new HttpHeaders();
-        h.set("X-Session-ID", freshSid); h.setContentType(MediaType.APPLICATION_JSON);
+        h.set("X-Session-ID", freshSid); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<GameSessionDTO> r = restTemplate.exchange(
             base() + "/next-round", HttpMethod.POST, new HttpEntity<>(h), GameSessionDTO.class);
 
@@ -249,7 +258,7 @@ public class GameFlowIntegrationTest {
         ReorderJokerRequestDTO req = new ReorderJokerRequestDTO();
         req.setJokerName("Algun Joker"); req.setDirection(-1);
         HttpHeaders h = new HttpHeaders();
-        h.set("X-Session-ID", "no-existe"); h.setContentType(MediaType.APPLICATION_JSON);
+        h.set("X-Session-ID", "no-existe"); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<String> r = restTemplate.exchange(
             base() + "/reorder-jokers", HttpMethod.POST, new HttpEntity<>(req, h), String.class);
         assertEquals(HttpStatus.NOT_FOUND, r.getStatusCode());
@@ -260,7 +269,7 @@ public class GameFlowIntegrationTest {
     @DisplayName("IT-12: POST /remove-joker con sesion invalida devuelve 404")
     void testRemoveJoker_InvalidSession_Returns404() {
         HttpHeaders h = new HttpHeaders();
-        h.set("X-Session-ID", "no-existe"); h.setContentType(MediaType.APPLICATION_JSON);
+        h.set("X-Session-ID", "no-existe"); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<String> r = restTemplate.exchange(
             base() + "/remove-joker", HttpMethod.POST, new HttpEntity<>(Map.of("name", "X"), h), String.class);
         assertEquals(HttpStatus.NOT_FOUND, r.getStatusCode());
@@ -271,7 +280,7 @@ public class GameFlowIntegrationTest {
     @DisplayName("IT-13: POST /remove-tarot con sesion invalida devuelve 404")
     void testRemoveTarot_InvalidSession_Returns404() {
         HttpHeaders h = new HttpHeaders();
-        h.set("X-Session-ID", "no-existe"); h.setContentType(MediaType.APPLICATION_JSON);
+        h.set("X-Session-ID", "no-existe"); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<String> r = restTemplate.exchange(
             base() + "/remove-tarot", HttpMethod.POST, new HttpEntity<>(Map.of("name", "X"), h), String.class);
         assertEquals(HttpStatus.NOT_FOUND, r.getStatusCode());
@@ -283,7 +292,7 @@ public class GameFlowIntegrationTest {
     void testUseTarot_InvalidSession_Returns404() {
         UseTarotRequestDTO req = new UseTarotRequestDTO(); req.setTarotName("El Loco");
         HttpHeaders h = new HttpHeaders();
-        h.set("X-Session-ID", "no-existe"); h.setContentType(MediaType.APPLICATION_JSON);
+        h.set("X-Session-ID", "no-existe"); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<String> r = restTemplate.exchange(
             base() + "/use-tarot", HttpMethod.POST, new HttpEntity<>(req, h), String.class);
         assertEquals(HttpStatus.NOT_FOUND, r.getStatusCode());
@@ -297,7 +306,7 @@ public class GameFlowIntegrationTest {
         card.setSuit("Corazones"); card.setRank("As"); card.setPoints(11); card.setMult(1); card.setAddMult(0);
 
         PlayHandRequestDTO req = new PlayHandRequestDTO(); req.setCards(List.of(card));
-        HttpHeaders h = new HttpHeaders(); h.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders h = new HttpHeaders(); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<ScoreResponseDTO> r = restTemplate.exchange(
             scoreBase() + "/calculate", HttpMethod.POST, new HttpEntity<>(req, h), ScoreResponseDTO.class);
 
@@ -314,7 +323,7 @@ public class GameFlowIntegrationTest {
         card.setSuit("Corazones"); card.setRank("INVALIDO"); card.setPoints(0); card.setMult(1); card.setAddMult(0);
 
         PlayHandRequestDTO req = new PlayHandRequestDTO(); req.setCards(List.of(card));
-        HttpHeaders h = new HttpHeaders(); h.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders h = new HttpHeaders(); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<String> r = restTemplate.exchange(
             scoreBase() + "/calculate", HttpMethod.POST, new HttpEntity<>(req, h), String.class);
 
@@ -336,7 +345,7 @@ public class GameFlowIntegrationTest {
         PlayHandRequestDTO playReq = new PlayHandRequestDTO();
         playReq.setCards(List.of(state.getPlayer().getHandCards().get(0)));
         HttpHeaders postH = new HttpHeaders();
-        postH.set("X-Session-ID", sid); postH.setContentType(MediaType.APPLICATION_JSON);
+        postH.set("X-Session-ID", sid); postH.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<PlayResponseDTO> playResp = restTemplate.exchange(
             base() + "/play", HttpMethod.POST, new HttpEntity<>(playReq, postH), PlayResponseDTO.class);
         assertEquals(HttpStatus.OK, playResp.getStatusCode());
@@ -353,7 +362,7 @@ public class GameFlowIntegrationTest {
         PlayHandRequestDTO playReq2 = new PlayHandRequestDTO();
         playReq2.setCards(List.of(newHand.get(0)));
         HttpHeaders postH2 = new HttpHeaders();
-        postH2.set("X-Session-ID", sid); postH2.setContentType(MediaType.APPLICATION_JSON);
+        postH2.set("X-Session-ID", sid); postH2.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         ResponseEntity<PlayResponseDTO> playResp2 = restTemplate.exchange(
             base() + "/play", HttpMethod.POST, new HttpEntity<>(playReq2, postH2), PlayResponseDTO.class);
         assertEquals(HttpStatus.OK, playResp2.getStatusCode());
@@ -376,7 +385,7 @@ public class GameFlowIntegrationTest {
 
         PlayHandRequestDTO playReq = new PlayHandRequestDTO();
         playReq.setCards(List.of(resp1.getBody().getPlayer().getHandCards().get(0)));
-        HttpHeaders h1 = new HttpHeaders(); h1.set("X-Session-ID", sid1); h1.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders h1 = new HttpHeaders(); h1.set("X-Session-ID", sid1); h1.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         restTemplate.exchange(base() + "/play", HttpMethod.POST, new HttpEntity<>(playReq, h1), PlayResponseDTO.class);
 
         HttpHeaders h2 = new HttpHeaders(); h2.set("X-Session-ID", sid2);

@@ -3,7 +3,7 @@ package TestClasses;
 import com.balatro.modelo.Card;
 import com.balatro.modelo.Deck;
 import com.balatro.modelo.FactoryCard;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 

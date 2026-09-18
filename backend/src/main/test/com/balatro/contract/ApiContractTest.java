@@ -1,12 +1,14 @@
 package com.balatro.contract;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.http.*;
 
 import java.util.Set;
@@ -52,8 +54,15 @@ public class ApiContractTest {
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
     }
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate(new org.springframework.http.client.JdkClientHttpRequestFactory());
+    {
+        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
+            @Override
+            public boolean hasError(ClientHttpResponse response) {
+                return false;
+            }
+        });
+    }
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -225,7 +234,7 @@ public class ApiContractTest {
 
         HttpHeaders h = new HttpHeaders();
         h.set("X-Session-ID", sid);
-        h.setContentType(MediaType.APPLICATION_JSON);
+        h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
         ResponseEntity<String> response = restTemplate.exchange(
             base() + "/play", HttpMethod.POST, new HttpEntity<>(playCard(sid, card), h), String.class);
@@ -273,7 +282,7 @@ public class ApiContractTest {
 
         HttpHeaders h = new HttpHeaders();
         h.set("X-Session-ID", sid);
-        h.setContentType(MediaType.APPLICATION_JSON);
+        h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
         ResponseEntity<String> response = restTemplate.exchange(
             base() + "/discard", HttpMethod.POST, new HttpEntity<>(playCard(sid, card), h), String.class);
@@ -297,7 +306,7 @@ public class ApiContractTest {
     @DisplayName("CT-08: POST /score/calculate -> ScoreResponseDTO con handName, points, mult, totalScore")
     void contract_ScoreCalculate_ScoreResponseDTO() throws Exception {
         String payload = "{\"cards\":[{\"suit\":\"Corazones\",\"rank\":\"As\",\"points\":11,\"mult\":1,\"addMult\":0}]}";
-        HttpHeaders h = new HttpHeaders(); h.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders h = new HttpHeaders(); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
         ResponseEntity<String> response = restTemplate.exchange(
             scoreBase() + "/calculate", HttpMethod.POST, new HttpEntity<>(payload, h), String.class);
@@ -328,7 +337,7 @@ public class ApiContractTest {
         JsonNode card = startBody.get("player").get("handCards").get(0);
 
         HttpHeaders h = new HttpHeaders();
-        h.set("X-Session-ID", sid); h.setContentType(MediaType.APPLICATION_JSON);
+        h.set("X-Session-ID", sid); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
         ResponseEntity<String> response = restTemplate.exchange(
             base() + "/evaluate-hand", HttpMethod.POST, new HttpEntity<>(playCard(sid, card), h), String.class);
@@ -378,7 +387,7 @@ public class ApiContractTest {
     void contract_InvalidSession_AlwaysReturns404() {
         HttpHeaders h = new HttpHeaders();
         h.set("X-Session-ID", "sesion-contrato-invalida");
-        h.setContentType(MediaType.APPLICATION_JSON);
+        h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
         ResponseEntity<String> r1 = restTemplate.exchange(
             base() + "/state", HttpMethod.GET, new HttpEntity<>(h), String.class);
@@ -414,7 +423,7 @@ public class ApiContractTest {
     @DisplayName("CT-12: /score/calculate con rank invalido -> HTTP 400 exacto (no 500)")
     void contract_InvalidRank_Returns400() {
         String payload = "{\"cards\":[{\"suit\":\"Corazones\",\"rank\":\"INVALIDO\",\"points\":0,\"mult\":1,\"addMult\":0}]}";
-        HttpHeaders h = new HttpHeaders(); h.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders h = new HttpHeaders(); h.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
         ResponseEntity<String> response = restTemplate.exchange(
             scoreBase() + "/calculate", HttpMethod.POST, new HttpEntity<>(payload, h), String.class);
@@ -442,7 +451,7 @@ public class ApiContractTest {
         assertTrue(stateResp.getHeaders().getContentType().toString().contains("application/json"),
             "GET /state debe devolver application/json");
 
-        HttpHeaders hj = new HttpHeaders(); hj.set("X-Session-ID", sid); hj.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders hj = new HttpHeaders(); hj.set("X-Session-ID", sid); hj.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         String payload = "{\"cards\":[{\"suit\":\"Corazones\",\"rank\":\"As\",\"points\":11,\"mult\":1,\"addMult\":0}]}";
         ResponseEntity<String> scoreResp = restTemplate.exchange(
             scoreBase() + "/calculate", HttpMethod.POST, new HttpEntity<>(payload, hj), String.class);
@@ -502,21 +511,21 @@ public class ApiContractTest {
         HttpHeaders headers = response.getHeaders();
 
         // X-Frame-Options
-        assertTrue(headers.containsKey("X-Frame-Options"), "Falta header X-Frame-Options");
+        assertNotNull(headers.getFirst("X-Frame-Options"), "Falta header X-Frame-Options");
         assertEquals("DENY", headers.getFirst("X-Frame-Options"), "X-Frame-Options debe ser DENY");
 
         // X-Content-Type-Options
-        assertTrue(headers.containsKey("X-Content-Type-Options"), "Falta header X-Content-Type-Options");
+        assertNotNull(headers.getFirst("X-Content-Type-Options"), "Falta header X-Content-Type-Options");
         assertEquals("nosniff", headers.getFirst("X-Content-Type-Options"), "X-Content-Type-Options debe ser nosniff");
 
         // Cache-Control
-        assertTrue(headers.containsKey("Cache-Control"), "Falta header Cache-Control");
+        assertNotNull(headers.getFirst("Cache-Control"), "Falta header Cache-Control");
         String cacheControl = headers.getFirst("Cache-Control");
         assertTrue(cacheControl.contains("no-cache") || cacheControl.contains("no-store"),
             "Cache-Control debe prohibir almacenamiento en cache, fue: " + cacheControl);
 
         // Content-Security-Policy
-        assertTrue(headers.containsKey("Content-Security-Policy"), "Falta header Content-Security-Policy");
+        assertNotNull(headers.getFirst("Content-Security-Policy"), "Falta header Content-Security-Policy");
         assertTrue(headers.getFirst("Content-Security-Policy").contains("default-src 'self'"),
             "CSP debe contener default-src 'self'");
     }
@@ -535,7 +544,7 @@ public class ApiContractTest {
         System.out.println("DEBUG CORS GET - Headers: " + response.getHeaders());
 
         HttpHeaders respHeaders = response.getHeaders();
-        assertTrue(respHeaders.containsKey("Access-Control-Allow-Origin"),
+        assertNotNull(respHeaders.getFirst("Access-Control-Allow-Origin"),
             "Falta el header Access-Control-Allow-Origin en la respuesta GET. Headers recibidos: " + respHeaders);
     }
 
@@ -546,7 +555,7 @@ public class ApiContractTest {
     @DisplayName("CT-18: POST con JSON malformado devuelve 400 Bad Request y no 500")
     void contract_MalformedJSON_Returns400() {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         String malformedJson = "{invalid-json-syntax:[cards:{}";
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -563,7 +572,7 @@ public class ApiContractTest {
     @DisplayName("CT-19: POST con cuerpo vacio devuelve 400 o error controlado y no 500")
     void contract_EmptyPayload_ReturnsClientError() {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
         String emptyPayload = "";
 
         ResponseEntity<String> response = restTemplate.exchange(

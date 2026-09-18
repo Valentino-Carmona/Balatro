@@ -19,7 +19,7 @@ services:
       args:
         - VITE_API_URL=${VITE_API_URL:-http://localhost:8080/api/v1/game}
     ports:
-      - "5173:80" # Mapeamos el puerto 80 del contenedor Nginx al puerto 5173 para respetar la info de desarrollo
+      - "5173:80"
     depends_on:
       - backend
     networks:
